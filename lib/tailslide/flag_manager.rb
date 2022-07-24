@@ -14,7 +14,7 @@ class FlagManger
   
   def initialize_flags
     nats_client.initialize_flags
-    # redis_ts_client.init
+    redis_ts_client.init
   end
   
   def set_flags(flags)
@@ -27,12 +27,14 @@ class FlagManger
   
   def disconnect
     nats_client.disconnect
-    # redis_ts_client.disconnect
+    redis_ts_client.disconnect
   end
   
   def new_toggler(config)
+    p config
+
     return Toggler.new(**config, get_flags:method(:get_flags), user_context:user_context,
-                       emit_redis_signal:redis_ts_client.emit_signal
+                       emit_redis_signal:redis_ts_client.method(:emit_signal)
                       )
   end
   

@@ -21,6 +21,17 @@ class Toggler
     flag["is_active"] && (is_user_white_listed(flag) || validate_user_rollout(flag))
   end
   
+  def emit_success
+    return unless flag_id
+    p 'emiting success'
+    emit_redis_signal.call(flag_id, app_id, 'success')
+  end
+
+  def emit_failure
+    return unless flag_id
+    emit_redis_signal.call(flag_id, app_id, 'failure')
+  end
+  
   private
   def get_matching_flag
     flag = get_flags.call.find { |flag| flag["title"] == flag_name}

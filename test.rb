@@ -10,27 +10,33 @@ require_relative 'lib/tailslide/toggler'
 # config = {server_url: "localhost:4222", callback: :p, token: 'myToken', stream:"flags", subject:'1'}
 app_id = "1"
 flag_name = 'Flag in app 1 number 1'
+flag_config = {"flag_name": flag_name}
 
-config = {nats_server:'localhost:4222', stream:'flags', app_id:app_id, sdk_key:'myToken', user_context:'375d39e6-9c3f-4f58-80bd-e5960b710295'}
+config = {nats_server:'localhost:4222', stream:'flags', app_id:app_id, sdk_key:'myToken', user_context:'375d39e6-9c3f-4f58-80bd-e5960b710295',
+   redis_host:'localhost', redis_port:6379}
 
 
 Async do |task|
   manager = FlagManger.new(**config) 
   manager.initialize_flags
-  flag_config = {"flag_name": flag_name}
-  
   flag_toggler = manager.new_toggler(flag_config)
   
-  p "hello"
-  while true 
-    if flag_toggler.is_flag_active
-      p "Flag in #{app_id} with name \"#{flag_name}\" is active!"
-      # flag_toggler.emit_success()
-    else
-      p "Flag in #{app_id} with name \"#{flag_name}\" is not active!"
-      # flag_toggler.emit_failure()
-    end
-    sleep 4
+
+  if flag_toggler.is_flag_active
+    puts "Flag in #{app_id} with name \"#{flag_name}\" is active!"
+    flag_toggler.emit_success()
+  else
+    puts "Flag in #{app_id} with name \"#{flag_name}\" is not active!"
+    flag_toggler.emit_failure()
+  end
+  sleep 5
+
+  if flag_toggler.is_flag_active
+    puts "Flag in #{app_id} with name \"#{flag_name}\" is active!"
+    flag_toggler.emit_success()
+  else
+    puts "Flag in #{app_id} with name \"#{flag_name}\" is not active!"
+    flag_toggler.emit_failure()
   end
 end
 

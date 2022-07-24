@@ -37,19 +37,18 @@ class NatsClient
   
   def fetch_ongoing_event_messages
     Async do |task|
-     task.async do
       self.subscribed_stream = jetstream.pull_subscribe(subject, 'me', config: { deliver_policy: 'new' })
       begin
         messages = subscribed_stream.fetch(1)
         messages.each do |message|
           message.ack
           json_data = JSON.parse message.data
+          p json_data
           callback.call(json_data)
         end
       rescue NATS::IO::Timeout => e
         p e
       end until nats_connection.closed?
-     end
     end
   end
   
