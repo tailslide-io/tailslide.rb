@@ -9,10 +9,10 @@ require_relative 'lib/tailslide/toggler'
 
 # config = {server_url: "localhost:4222", callback: :p, token: 'myToken', stream:"flags", subject:'1'}
 app_id = "1"
-flag_name = 'Flag in app 1 number 1'
+flag_name = 'App 1 Flag 1'
 flag_config = {"flag_name": flag_name}
 
-config = {nats_server:'localhost:4222', stream:'flags', app_id:app_id, sdk_key:'myToken', user_context:'375d39e6-9c3f-4f58-80bd-e5960b710295',
+config = {nats_server:'localhost:4222', stream:'flags_ruleset', app_id:app_id, sdk_key:'myToken', user_context:'375d39e6-9c3f-4f58-80bd-e5960b710295',
    redis_host:'localhost', redis_port:6379}
 
 
@@ -29,14 +29,18 @@ Async do |task|
     puts "Flag in #{app_id} with name \"#{flag_name}\" is not active!"
     flag_toggler.emit_failure()
   end
-  sleep 5
-
-  if flag_toggler.is_flag_active
-    puts "Flag in #{app_id} with name \"#{flag_name}\" is active!"
-    flag_toggler.emit_success()
-  else
-    puts "Flag in #{app_id} with name \"#{flag_name}\" is not active!"
-    flag_toggler.emit_failure()
+  
+  count = 0
+  limit = 20
+  while count < limit do
+    if rand < 1
+      flag_toggler.emit_success
+      puts "Emitting success"
+    else
+      flag_toggler.emit_failure
+      puts "Emitting failure"
+    end
+    sleep 1
   end
 end
 

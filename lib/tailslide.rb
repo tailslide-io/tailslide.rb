@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 require_relative "tailslide/version"
+require_relative "tailslide/flag_manager"
 
 module Tailslide
-  class Error < StandardError; end
+  class FlagManger < FlagManger
+  end
   # Your code goes here...
 end
