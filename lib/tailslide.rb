@@ -4,7 +4,7 @@ require_relative "tailslide/version"
 require_relative "tailslide/flag_manager"
 
 module Tailslide
-  class FlagManger < FlagManger
+  class FlagManager < FlagManager
   end
   # Your code goes here...
 end

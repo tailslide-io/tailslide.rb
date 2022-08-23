@@ -1,7 +1,6 @@
 require "async"
 # require "./lib/tailslide/nats_client.rb"
 require_relative "lib/tailslide/flag_manager.rb"
-require_relative 'lib/tailslide/toggler'
 
 # def logMessage(message)
 #   p message
@@ -17,7 +16,7 @@ config = {nats_server:'localhost:4222', stream:'flags_ruleset', app_id:app_id, s
 
 
 Async do |task|
-  manager = FlagManger.new(**config) 
+  manager = FlagManager.new(**config) 
   manager.initialize_flags
   flag_toggler = manager.new_toggler(flag_config)
   

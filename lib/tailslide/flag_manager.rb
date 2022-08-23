@@ -2,8 +2,7 @@ require_relative 'nats_client'
 require_relative 'redis_timeseries_client'
 require_relative 'toggler'
 
-class FlagManger
-  attr_reader :nats_client, :redis_ts_client, :user_context
+class FlagManager
 
   def initialize(nats_server: '', stream: '', app_id: '', sdk_key: '', user_context: '', redis_host: '', redis_port: '')
     @nats_client = NatsClient.new(server_url: nats_server, stream: stream, subject: app_id, callback: method(:set_flags),
@@ -14,8 +13,8 @@ class FlagManger
   end
 
   def initialize_flags
-    nats_client.initialize_flags
-    redis_ts_client.init
+    @nats_client.initialize_flags
+    @redis_ts_client.init
   end
 
   def set_flags(flags)
@@ -25,15 +24,23 @@ class FlagManger
   def get_flags
     @flags
   end
+  
+  def set_user_context(new_user_context)
+    @user_context = new_user_context
+  end
+  
+  def get_user_context
+    @user_context
+  end
 
   def disconnect
-    nats_client.disconnect
-    redis_ts_client.disconnect
+    @nats_client.disconnect
+    @redis_ts_client.disconnect
   end
 
   def new_toggler(config)
-    Toggler.new(**config, get_flags: method(:get_flags), user_context: user_context,
-                          emit_redis_signal: redis_ts_client.method(:emit_signal))
+    Toggler.new(**config, get_flags: method(:get_flags), user_context: get_user_context,
+                          emit_redis_signal: @redis_ts_client.method(:emit_signal))
   end
 end
 
